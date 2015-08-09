@@ -10,6 +10,8 @@ import net.javacoding.jspider.core.throttle.ThrottleFactory;
 import net.javacoding.jspider.core.util.config.*;
 
 import java.net.URL;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  *
@@ -19,7 +21,20 @@ import java.net.URL;
  */
 public class SpiderContextFactory {
 
-	public static SpiderContext createContext(URL baseURL) {
+	private static Map<URL, SpiderContext> map = new ConcurrentHashMap();
+
+	public static SpiderContext getSpiderContext(URL baseURL) {
+		if (map.get(baseURL) == null) {
+			synchronized (SpiderContextFactory.class) {
+				if (map.get(baseURL) == null) {
+					map.put(baseURL, createContext(baseURL));
+				}
+			}
+		}
+		return map.get(baseURL);
+	}
+
+	private static SpiderContext createContext(URL baseURL) {
 
 		EventSink[] sinks = new PluginFactory().createPlugins();
 		PropertySet props = ConfigurationFactory.getConfiguration().getPluginsConfiguration();
@@ -27,13 +42,10 @@ public class SpiderContextFactory {
 		EventDispatcher dispatcher = new EventDispatcherImpl("Global Event Dispatcher", sinks, filterProps);
 		dispatcher.initialize();
 
-		Storage storage = new StorageFactory().createStorage();
+		Storage storage = StorageFactory.createStorage();
 		ThrottleFactory throttleFactory = new ThrottleFactory();
 
 		SpiderContext context = new SpiderContextImpl(baseURL, dispatcher, throttleFactory, storage);
-
-		//todo: This is quite weird, isn't it?  REFACTOR the relationship between Agent and Context!  HOW ???
-		context.setAgent(new AgentImpl(context));
 
 		return context;
 	}

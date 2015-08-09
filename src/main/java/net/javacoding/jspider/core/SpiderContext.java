@@ -29,8 +29,6 @@ public interface SpiderContext {
 
 	public Agent getAgent();
 
-	public void setAgent(Agent agent);
-
 	public URL getBaseURL();
 
 	public EventDispatcher getEventDispatcher();

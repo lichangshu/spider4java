@@ -115,7 +115,7 @@ public class AgentImpl implements Agent, CoreEventVisitor {
 
 	public void visit(URL url, URLSpideredOkEvent event) {
 		storage.getResourceDAO().setSpidered(url, event);
-		eventDispatcher.dispatch(new ResourceFetchedEvent(storage.getResourceDAO().getResource(url)));
+		eventDispatcher.dispatch(new ResourceFetchedEvent(event.getContext(), storage.getResourceDAO().getResource(url)));
 		scheduler.schedule(new DecideOnParsingTask(context, url));
 	}
 
@@ -211,7 +211,7 @@ public class AgentImpl implements Agent, CoreEventVisitor {
 		byte[] bytes = event.getBytes();
 		site.registerRobotsTXT();
 		eventDispatcher.dispatch(new ResourceDiscoveredEvent(resource));
-		eventDispatcher.dispatch(new ResourceFetchedEvent(resource));
+		eventDispatcher.dispatch(new ResourceFetchedEvent(event.getContext(), resource));
 		eventDispatcher.dispatch(new RobotsTXTFetchedEvent(site, new String(bytes)));
 		context.registerRobotsTXT(site, new ByteArrayInputStream(bytes));
 		storage.getSiteDAO().save(site);

@@ -17,35 +17,37 @@ import net.javacoding.jspider.core.util.config.PropertySet;
  * if match any regular,it is pass (Will be spider or parse) !!<br />
  *
  * Example::<br/>
- * 
+ *
  * @author changshu.li
  */
 public class AcceptPattenUrlOnlyRule extends BaseRuleImpl {
 
 	private static final Log log = LogFactory.getLog(AcceptPattenUrlOnlyRule.class);
 
-	public static final String COUNT = "count";
-	public static final String PATTERN = "pattern.";
+	public static final String PATTERN = "pattern";
+	public static final String QUERY_ENABLE = "query.enable";
 
-	protected Pattern[] patterns;
+	protected Pattern pattern;
+	protected boolean queryEnable = false;
 
 	public AcceptPattenUrlOnlyRule(PropertySet config) {
 		super();
-		int count = config.getInteger(COUNT, 0);
-		patterns = new Pattern[count];
-		for (int i = 1; i <= count; i++) {
-			patterns[i - 1] = Pattern.compile(config.getString(PATTERN + i, "^$"));
-		}
-		log.info("load pattern size " + patterns.length);
+		pattern = Pattern.compile(config.getString(PATTERN, "^$"));
+		queryEnable = config.getBoolean(QUERY_ENABLE, false);
+		log.info("load pattern size " + pattern.toString());
 	}
 
 	@Override
 	public Decision apply(SpiderContext context, Site site, URL url) {
-		for (Pattern skipUrl : patterns) {
-			if (skipUrl.matcher(url.getPath()).matches()) {
-				log.info("AcceptPattenUrlOnlyRule accept : " + url);
-				return new DecisionInternal(Decision.RULE_ACCEPT, "accept pattern rule - so resource is accepted");
+		String path = url.getPath();
+		if (queryEnable) {
+			if (url.getQuery() != null) {
+				path += "?" + url.getQuery();
 			}
+		}
+		if (pattern.matcher(path).matches()) {
+			log.info("AcceptPattenUrlOnlyRule accept : " + url);
+			return new DecisionInternal(Decision.RULE_ACCEPT, "accept pattern rule - so resource is accepted");
 		}
 		if (context.getBaseURL().equals(url)) {
 			log.info("AcceptPattenUrlOnlyRule accept base path : " + url);

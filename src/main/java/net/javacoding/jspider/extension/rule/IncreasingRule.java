@@ -8,6 +8,9 @@ package net.javacoding.jspider.extension.rule;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
+import java.util.Comparator;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.javacoding.jspider.api.model.Decision;
@@ -18,6 +21,7 @@ import net.javacoding.jspider.core.logging.Log;
 import net.javacoding.jspider.core.logging.LogFactory;
 import net.javacoding.jspider.core.model.DecisionInternal;
 import net.javacoding.jspider.core.rule.impl.BaseRuleImpl;
+import net.javacoding.jspider.core.util.URLUtil;
 import net.javacoding.jspider.core.util.config.PropertySet;
 
 /**
@@ -27,21 +31,27 @@ import net.javacoding.jspider.core.util.config.PropertySet;
 public class IncreasingRule extends BaseRuleImpl {
 
 	private static final Log log = LogFactory.getLog(AcceptPattenUrlOnlyRule.class);
+	private static final Set<URL> set = new ConcurrentSkipListSet<URL>(new Comparator<URL>() {
+		@Override
+		public int compare(URL o1, URL o2) {
+			return o1.toString().compareTo(o2.toString());
+		}
+	});
 
 	public static final String FROM = "from";
 	public static final String TO = "to";
 	public static final String PATTERN = "pattern";
 	public static final String REPLACE = "replace";
+	public static final String QUERY_ENABLE = "query.enable";
 
 	protected int from;
 	protected int to;
 	protected Pattern pattern;
 	protected String replace;
+	protected boolean queryEnable = false;
 
 	/**
-	 *
-	 * Content form and to (from <= X <=to) ! MessageFormat.format to format
-	 * Data!
+	 * 包含 form 和 to
 	 *
 	 * @param config
 	 */
@@ -51,27 +61,37 @@ public class IncreasingRule extends BaseRuleImpl {
 		this.to = config.getInteger(TO, 0);
 		this.pattern = Pattern.compile(config.getString(PATTERN, null));
 		this.replace = config.getString(REPLACE, null);
+		this.queryEnable = config.getBoolean(QUERY_ENABLE, false);
 		log.info("load pattern " + from + " to " + to);
 	}
 
 	@Override
 	public Decision apply(SpiderContext context, Site currentSite, URL url) {
-		String path = url.getPath();
-		Matcher mt = pattern.matcher(path);
-		if (mt.matches()) {
-			int size = mt.groupCount() + 1;
-			Object[] pts = new Object[size + 1];
-			for (int i = 0; i < size; i++) {
-				pts[i] = mt.group(i);
+		if (!set.contains(url)) {
+			String path = url.getPath();
+			if (this.queryEnable) {
+				if (url.getQuery() != null) {
+					path += "?" + url.getQuery();
+				}
 			}
-			for (int i = from; i <= to; i++) {
-				pts[size] = i;
-				String fm = MessageFormat.format(replace, pts);
-				try {
-					context.getAgent().registerEvent(url, new URLFoundEvent(context, url, new URL(fm)));
-					log.info("Increasing page " + fm);
-				} catch (MalformedURLException ex) {
-					log.error(ex);
+			Matcher mt = pattern.matcher(path);
+			if (mt.matches()) {
+				int size = mt.groupCount() + 1;
+				Object[] pts = new Object[size + 1];
+				for (int i = 0; i < size; i++) {
+					pts[i] = mt.group(i);
+				}
+				for (int i = from; i <= to; i++) {
+					pts[size] = i;
+					String fm = MessageFormat.format(replace, pts);
+					try {
+						URL find = URLUtil.normalize(new URL(url, fm));
+						set.add(find);
+						context.getAgent().registerEvent(url, new URLFoundEvent(context, url, find));
+						log.info("Increasing page " + find);
+					} catch (MalformedURLException ex) {
+						log.error(ex);
+					}
 				}
 			}
 		}

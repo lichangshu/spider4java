@@ -87,7 +87,7 @@ public class DiskWriterPlugin implements Plugin {
 				path = url.getHost() + url.getPath() + extension;
 			}
 			if (query != null) {
-				path += "_reqeust.param.is_" + query + paramSuffix;
+				path += "_withparam" + File.separator + query.replaceAll("&", "/") + paramSuffix;
 			}
 			File outputFile = new File(outputFolder, path);
 			outputFile.getParentFile().mkdirs();//创建父目录

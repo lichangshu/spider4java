@@ -31,7 +31,7 @@ public class URLUtil {
 			urlString = normalizeDotFolders(urlString);
 			urlString = normalizeBackSlashes(urlString);
 			urlString = normalizeDoubleSlashes(urlString);
-			urlString = normalizeStripQuery(urlString);
+			//urlString = normalizeStripQuery(urlString);
 			//urlString = normalizeStripTrailingSlash(urlString) ;
 
 			try {

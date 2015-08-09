@@ -30,6 +30,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
+import net.javacoding.jspider.core.AgentFactory;
 
 /**
  *
@@ -39,7 +40,6 @@ import java.util.Map;
  */
 public class SpiderContextImpl implements SpiderContext {
 
-	protected Agent agent;
 	protected URL baseURL;
 	protected EventDispatcher eventDispatcher;
 	protected ThrottleFactory throttleFactory;
@@ -100,10 +100,6 @@ public class SpiderContextImpl implements SpiderContext {
 		}
 	}
 
-	public void setAgent(Agent agent) {
-		this.agent = agent;
-	}
-
 	public synchronized void setCookies(Site site, Cookie[] cookies) {
 		if (cookies != null && cookies.length > 0) {
 			storage.getCookieDAO().save(site, cookies);
@@ -133,7 +129,7 @@ public class SpiderContextImpl implements SpiderContext {
 	}
 
 	public Agent getAgent() {
-		return agent;
+		return AgentFactory.getAgent(this);
 	}
 
 	public URL getBaseURL() {

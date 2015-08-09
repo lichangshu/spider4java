@@ -14,7 +14,7 @@ import net.javacoding.jspider.core.util.config.*;
  */
 public class StorageFactory {
 
-	public Storage createStorage() {
+	public static Storage createStorage() {
 
 		PropertySet props = ConfigurationFactory.getConfiguration().getJSpiderConfiguration();
 

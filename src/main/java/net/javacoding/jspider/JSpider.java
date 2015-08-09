@@ -22,7 +22,7 @@ public class JSpider {
 
 	public JSpider(URL baseURL) throws Exception {
 		SpiderNest nest = new SpiderNest();
-		context = SpiderContextFactory.createContext(baseURL);
+		context = SpiderContextFactory.getSpiderContext(baseURL);
 		spider = nest.breedSpider(context);
 	}
 
