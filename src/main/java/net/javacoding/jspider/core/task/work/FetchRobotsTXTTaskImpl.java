@@ -11,6 +11,7 @@ import net.javacoding.jspider.core.util.http.HTTPHeaderUtil;
 
 import java.io.*;
 import java.net.*;
+import static net.javacoding.jspider.core.task.work.SpiderHttpURLTask.TIME_OUT_MILLISECOND;
 
 /**
  * $Id: FetchRobotsTXTTaskImpl.java,v 1.19 2003/04/25 21:29:05 vanrogu Exp $
@@ -43,9 +44,14 @@ public class FetchRobotsTXTTaskImpl extends BaseWorkerTaskImpl {
 		try {
 			connection = url.openConnection();
 
-            // RFC states that redirects should be followed.
+			HttpURLConnection conn = (HttpURLConnection) connection;
+			conn.setInstanceFollowRedirects(false);
+			conn.setConnectTimeout(TIME_OUT_MILLISECOND);
+			conn.setReadTimeout(TIME_OUT_MILLISECOND);
+
+			// RFC states that redirects should be followed.
 			// see: http://www.robotstxt.org/wc/norobots-rfc.txt
-			((HttpURLConnection) connection).setInstanceFollowRedirects(true);
+			conn.setInstanceFollowRedirects(true);
 			connection.setRequestProperty("User-agent", site.getUserAgent());
 			context.preHandle(connection, site);
 
