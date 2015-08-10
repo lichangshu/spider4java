@@ -19,6 +19,7 @@
       <outputDirectory>/</outputDirectory>
       <excludes>
         <exclude>/output/**</exclude>
+        <exclude>/lib/**</exclude>
       </excludes>
     </fileSet>
   </fileSets>
