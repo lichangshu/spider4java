@@ -31,12 +31,7 @@ import net.javacoding.jspider.core.util.config.PropertySet;
 public class IncreasingRule extends BaseRuleImpl {
 
 	private static final Log log = LogFactory.getLog(AcceptPattenUrlOnlyRule.class);
-	private static final Set<URL> set = new ConcurrentSkipListSet<URL>(new Comparator<URL>() {
-		@Override
-		public int compare(URL o1, URL o2) {
-			return o1.toString().compareTo(o2.toString());
-		}
-	});
+	private static final Set<String> set = new ConcurrentSkipListSet();
 
 	public static final String FROM = "from";
 	public static final String TO = "to";
@@ -67,7 +62,7 @@ public class IncreasingRule extends BaseRuleImpl {
 
 	@Override
 	public Decision apply(SpiderContext context, Site currentSite, URL url) {
-		if (!set.contains(url)) {
+		if (!set.contains(url.toString())) {
 			String path = url.getPath();
 			if (this.queryEnable) {
 				if (url.getQuery() != null) {
@@ -82,13 +77,14 @@ public class IncreasingRule extends BaseRuleImpl {
 					pts[i] = mt.group(i);
 				}
 				for (int i = from; i <= to; i++) {
+					log.info(String.format("Increasing page for [%s], from [%d] to [%d]!", url, from, to));
 					pts[size] = i;
 					String fm = MessageFormat.format(replace, pts);
 					try {
 						URL find = URLUtil.normalize(new URL(url, fm));
-						set.add(find);
+						set.add(find.toString());
 						context.getAgent().registerEvent(url, new URLFoundEvent(context, url, find));
-						log.info("Increasing page " + find);
+						log.debug("Increasing page " + find);
 					} catch (MalformedURLException ex) {
 						log.error(ex);
 					}

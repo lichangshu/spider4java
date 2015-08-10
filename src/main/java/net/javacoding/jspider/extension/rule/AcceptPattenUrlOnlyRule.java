@@ -46,11 +46,11 @@ public class AcceptPattenUrlOnlyRule extends BaseRuleImpl {
 			}
 		}
 		if (pattern.matcher(path).matches()) {
-			log.info("AcceptPattenUrlOnlyRule accept : " + url);
+			log.debug("AcceptPattenUrlOnlyRule accept : " + url);
 			return new DecisionInternal(Decision.RULE_ACCEPT, "accept pattern rule - so resource is accepted");
 		}
 		if (context.getBaseURL().equals(url)) {
-			log.info("AcceptPattenUrlOnlyRule accept base path : " + url);
+			log.debug("AcceptPattenUrlOnlyRule accept base path : " + url);
 			return new DecisionInternal(Decision.RULE_ACCEPT, "url accepted");
 		} else {
 			log.debug("AcceptPattenUrlOnlyRule Ignore path : " + url);

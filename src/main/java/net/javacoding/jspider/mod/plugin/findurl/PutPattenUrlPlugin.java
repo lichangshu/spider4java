@@ -92,15 +92,14 @@ public class PutPattenUrlPlugin implements Plugin {
 			SpiderContext context = rfe.getSpiderContext();
 			URL origin = rfe.getResource().getURL();
 			String path = origin.getPath();
-			if(queryEnable){
-				if(origin.getQuery() != null){
+			if (queryEnable) {
+				if (origin.getQuery() != null) {
 					path += "?" + origin.getQuery();
 				}
 			}
 			if (!parsers.matcher(path).matches()) {
 				return;
 			}
-			InputStream in = rfe.getResource().getInputStream();
 			HTTPHeader[] heads = rfe.getResource().getHeaders();
 			String charset = Charset.defaultCharset().toString();
 			for (HTTPHeader hd : heads) {
@@ -121,8 +120,7 @@ public class PutPattenUrlPlugin implements Plugin {
 					}
 				}
 			}
-			try {
-				BufferedReader rd = new BufferedReader(new InputStreamReader(in, charset));
+			try (BufferedReader rd = new BufferedReader(new InputStreamReader(rfe.getResource().getInputStream(), charset))) {
 				while (true) {
 					String line = rd.readLine();
 					if (line == null) {
