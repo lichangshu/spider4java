@@ -138,7 +138,7 @@ public class PutPattenUrlPlugin implements Plugin {
 									.registerEvent(
 											origin,
 											new URLFoundEvent(context, origin, find));
-							log.info("Plug increasing page " + fm);
+							log.debug("Plug increasing page " + fm);
 						}
 					}
 				}
