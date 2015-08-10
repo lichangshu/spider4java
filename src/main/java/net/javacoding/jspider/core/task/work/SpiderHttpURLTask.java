@@ -87,7 +87,7 @@ public class SpiderHttpURLTask extends BaseWorkerTaskImpl {
 					i = is.read();
 				}
 			} catch (IOException e) {
-				LogFactory.getLog(SpiderHttpURLTask.class).error("i/o exception during fetch", e);
+				LogFactory.getLog(SpiderHttpURLTask.class).error("i/o exception during fetch : "+ url.toString(), e);
 			}
 
 			String contentType = connection.getContentType();
@@ -107,7 +107,7 @@ public class SpiderHttpURLTask extends BaseWorkerTaskImpl {
 			headers = HTTPHeaderUtil.getHeaders(connection);
 			event = new URLSpideredErrorEvent(context, url, 404, connection, headers, e);
 		} catch (Exception e) {
-			LogFactory.getLog(this.getClass()).error("exception during spidering", e);
+			LogFactory.getLog(this.getClass()).error("exception during spidering:" + url.toString(), e);
 			event = new URLSpideredErrorEvent(context, url, httpStatus, connection, headers, e);
 		} finally {
 			notifyEvent(url, event);

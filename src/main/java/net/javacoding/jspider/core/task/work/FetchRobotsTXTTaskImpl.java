@@ -73,7 +73,7 @@ public class FetchRobotsTXTTaskImpl extends BaseWorkerTaskImpl {
 					i = is.read();
 				}
 			} catch (IOException e) {
-				LogFactory.getLog(FetchRobotsTXTTaskImpl.class).error("i/o exception during fetch robots.txt", e);
+				LogFactory.getLog(FetchRobotsTXTTaskImpl.class).error("i/o exception during fetch robots.txt : " + url.toString(), e);
 			}
 			String contentType = connection.getContentType();
 			int size = connection.getContentLength();
