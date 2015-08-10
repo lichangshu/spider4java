@@ -18,7 +18,7 @@
     <layout class="org.apache.log4j.PatternLayout">
       <!-- The default pattern: Date Priority [Category] Message\n -->
       <!-- param name="ConversionPattern" value="%d{ABSOLUTE} %-5p [%c{1}] %m%n"/-->
-      <param name="ConversionPattern" value="%-5p [%c] %m%n"/>
+      <param name="ConversionPattern" value="%-5p [%c{2}] %m%n"/>
     </layout>
   </appender>
 
@@ -33,7 +33,18 @@
     <param name="File" value="${jspider.home}/output/error.out"/>
     <layout class="org.apache.log4j.PatternLayout">
       <!-- The default pattern: Date Priority [Category] Message\n -->
-      <param name="ConversionPattern" value="%-d{yyyy-MM-dd HH:mm:ss} [ %t:%r ]-[ %p ] %m%n"/>
+      <param name="ConversionPattern" value="%-d{yyyy-MM-dd HH:mm:ss} [%p] [%c] [%t:%r] %m%n"/>
+    </layout>
+  </appender>
+
+  <appender name="D" class="org.apache.log4j.RollingFileAppender">
+    <param name="Threshold" value="DEBUG"/>
+    <param name="Append" value="false"/>
+    <param name="File" value="${jspider.home}/output/debug.out"/>
+    <param name="MaxFileSize" value="5MB"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <!-- The default pattern: Date Priority [Category] Message\n -->
+      <param name="ConversionPattern" value="%-d{yyyy-MM-dd HH:mm:ss} [%c] [%p] [%t:%r] %m%n"/>
     </layout>
   </appender>
 
@@ -43,10 +54,9 @@
     <param name="File" value="${jspider.home}/output/app.out"/>
     <layout class="org.apache.log4j.PatternLayout">
       <!-- The default pattern: Date Priority [Category] Message\n -->
-      <param name="ConversionPattern" value="%-d{yyyy-MM-dd HH:mm:ss} [ %t:%r ]-[ %p ] %m%n"/>
+      <param name="ConversionPattern" value="%-d{yyyy-MM-dd HH:mm:ss} [%-5p] [%c{2}] %m%n"/>
     </layout>
   </appender>
-
 
   <!-- ====================== -->
   <!-- More Appender examples -->
@@ -100,12 +110,24 @@
   </category>
   -->
 
+<!--
+  <logger name="net.javacoding.jspider.mod.plugin.findurl" additivity="false">
+    <level value="DEBUG" />
+    <appender-ref ref="D" />
+  </logger>
+
+  <logger name="net.javacoding.jspider.extension.rule" additivity="false">
+    <level value="DEBUG" />
+    <appender-ref ref="D" />
+  </logger>
+-->
 
   <!-- ======================= -->
   <!-- Setup the Root category -->
   <!-- ======================= -->
 
   <root>
+    <level value="DEBUG" />
     <appender-ref ref="CONSOLE"/>
     <appender-ref ref="E"/>
     <appender-ref ref="FILE"/>
