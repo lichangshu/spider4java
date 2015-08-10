@@ -12,6 +12,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
+import net.javacoding.jspider.api.model.HTTPHeader;
 
 /**
  * $Id: ResourceDAOImpl.java,v 1.11 2003/04/19 19:00:46 vanrogu Exp $
@@ -21,6 +23,7 @@ class ResourceDAOImpl implements ResourceDAOSPI {
 	public static final String ATTRIBUTE_ID = "id";
 	public static final String ATTRIBUTE_SITE = "site";
 	public static final String ATTRIBUTE_URL = "url";
+	public static final String ATTRIBUTE_HEADER = "header";
 	public static final String ATTRIBUTE_STATE = "state";
 	public static final String ATTRIBUTE_MIME = "mimetype";
 	public static final String ATTRIBUTE_TIME = "timems";
@@ -291,12 +294,13 @@ class ResourceDAOImpl implements ResourceDAOSPI {
 
 	public ResourceInternal getResource(URL url) {
 		ResourceInternal resource = null;
-		Statement st = null;
+		PreparedStatement st = null;
 		ResultSet rs = null;
 		if (url != null) {
 			try {
-				st = dbUtil.getConnection().createStatement();
-				rs = st.executeQuery("select * from jspider_resource where url='" + url + "'");
+				st = dbUtil.getConnection().prepareStatement("select * from jspider_resource where url=?");
+				st.setString(1, url.toString());
+				rs = st.executeQuery();
 				if (rs.next()) {
 					resource = createResourceFromRecord(rs);
 				}
@@ -312,37 +316,22 @@ class ResourceDAOImpl implements ResourceDAOSPI {
 
 	public void create(int id, ResourceInternal resource) {
 		Connection connection = dbUtil.getConnection();
-		StringBuffer sb = new StringBuffer();
-		Statement st = null;
+		PreparedStatement st = null;
 
-		sb.append("insert into jspider_resource (");
-		sb.append("id,");
-		sb.append("url,");
-		sb.append("site,");
-		sb.append("state,");
-		sb.append("httpstatus,");
-		sb.append("timems,");
-		sb.append("folder");
-		sb.append(") values (");
-		sb.append(DBUtil.format(id));
-		sb.append(",");
-		sb.append(DBUtil.format(resource.getURL()));
-		sb.append(",");
-		sb.append(DBUtil.format(resource.getSiteId()));
-		sb.append(",");
-		sb.append(DBUtil.format(resource.getState()));
-		sb.append(",");
-		sb.append(DBUtil.format(resource.getHttpStatusInternal()));
-		sb.append(",");
-		sb.append(DBUtil.format(resource.getTimeMsInternal()));
-		sb.append(",");
+		String sql = "insert into jspider_resource (id, url, site, state, httpstatus, timems, folder) "
+				+ " value (?,?,?,?,?,?,?)";
 		FolderInternal folder = (FolderInternal) resource.getFolder();
 		int folderId = (folder == null) ? 0 : folder.getId();
-		sb.append(DBUtil.format(folderId));
-		sb.append(")");
 		try {
-			st = connection.createStatement();
-			st.executeUpdate(sb.toString());
+			st = connection.prepareStatement(sql);
+			st.setInt(1, id);
+			st.setString(2, resource.getURL().toString());
+			st.setInt(3, resource.getSiteId());
+			st.setInt(4, resource.getState());
+			st.setInt(5, resource.getHttpStatusInternal());
+			st.setInt(6, resource.getTimeMsInternal());
+			st.setInt(7, folderId);
+			st.executeUpdate();
 		} catch (SQLException e) {
 			log.error("SQLException", e);
 		} finally {
@@ -352,24 +341,30 @@ class ResourceDAOImpl implements ResourceDAOSPI {
 
 	public void save(ResourceInternal resource) {
 		Connection connection = dbUtil.getConnection();
+		PreparedStatement st = null;
+		String sql = "update jspider_resource set "
+				+ " state = ?, mimetype = ?, httpstatus = ?, size=?, header=?, timems=? "
+				+ " where id= ? ";
 		StringBuffer sb = new StringBuffer();
-		Statement st = null;
-		sb.append("update jspider_resource set ");
-		sb.append("state=");
-		sb.append(DBUtil.format(resource.getState()));
-		sb.append(",mimetype=");
-		sb.append(DBUtil.format(resource.getMimeInternal()));
-		sb.append(",httpstatus=");
-		sb.append(DBUtil.format(resource.getHttpStatusInternal()));
-		sb.append(",size=");
-		sb.append(DBUtil.format(resource.getSizeInternal()));
-		sb.append(",timems=");
-		sb.append(DBUtil.format(resource.getTimeMsInternal()));
-		sb.append(" where id=");
-		sb.append(DBUtil.format(resource.getId()));
+		if (resource.getHeaders() != null) {
+			for (HTTPHeader hd : resource.getHeaders()) {
+				String nm = hd.getName();
+				if (nm == null) {
+					nm = "";
+				}
+				sb.append(DBUtil.format(nm + ":" + hd.getValue() + "\n"));
+			}
+		}
 		try {
-			st = connection.createStatement();
-			st.executeUpdate(sb.toString());
+			st = connection.prepareStatement(sql);
+			st.setString(1, DBUtil.format(resource.getState()));
+			st.setString(2, resource.getMimeInternal());
+			st.setInt(3, resource.getHttpStatusInternal());
+			st.setInt(4, resource.getSizeInternal());
+			st.setString(5, sb.toString());
+			st.setInt(6, resource.getTimeMsInternal());
+			st.setInt(7, resource.getId());
+			st.executeUpdate();
 		} catch (SQLException e) {
 			log.error("SQLException", e);
 		} finally {
@@ -382,6 +377,7 @@ class ResourceDAOImpl implements ResourceDAOSPI {
 		int folderId = rs.getInt(ATTRIBUTE_FOLDER);
 		int siteId = rs.getInt(ATTRIBUTE_SITE);
 		String urlString = rs.getString(ATTRIBUTE_URL);
+		String headerString = rs.getString(ATTRIBUTE_HEADER);
 		int state = rs.getInt(ATTRIBUTE_STATE);
 		String mime = rs.getString(ATTRIBUTE_MIME);
 		int time = rs.getInt(ATTRIBUTE_TIME);
@@ -396,7 +392,21 @@ class ResourceDAOImpl implements ResourceDAOSPI {
 		} catch (MalformedURLException e) {
 			log.error("MalformedURLException", e);
 		}
+		List<HTTPHeader> head = new ArrayList();
+		if (headerString != null) {
+			String[] hds = headerString.trim().split("\n");
+			for (String hd : hds) {
+				String[] h2 = hd.trim().split(":");
+				if (h2.length >= 2) {
+					if ("".equals(h2[0])) {
+						h2[0] = null;
+					}
+					head.add(new HTTPHeader(h2[0], h2[1]));
+				}
+			}
+		}
 		ResourceInternal ri = new ResourceInternal(storage, id, siteId, url, null, folder);
+		ri.setFetched(httpStatus, size, time, null, null, head.toArray(new HTTPHeader[head.size()]));
 		ri.setSize(size);
 		ri.setTime(time);
 		ri.setState(state);
