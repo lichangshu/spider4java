@@ -121,9 +121,10 @@ public class PutPattenUrlPlugin implements Plugin {
 				}
 			}
 			try (BufferedReader rd = new BufferedReader(new InputStreamReader(rfe.getResource().getInputStream(), charset))) {
-				while (true) {
+				for (int count = 0; count < Integer.MAX_VALUE;) {
 					String line = rd.readLine();
 					if (line == null) {
+						log.info(String.format("Plug parse page [%s] add url [%d]", origin.toString(), count));
 						break;
 					}
 					for (int i = 0; i < patterns.length; i++) {
@@ -139,6 +140,7 @@ public class PutPattenUrlPlugin implements Plugin {
 											origin,
 											new URLFoundEvent(context, origin, find));
 							log.debug("Plug increasing page " + fm);
+							count++;
 						}
 					}
 				}
