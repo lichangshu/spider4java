@@ -77,7 +77,9 @@ public class IncreasingRule extends BaseRuleImpl {
 					pts[i] = mt.group(i);
 				}
 				for (int i = from; i <= to; i++) {
-					log.info(String.format("Increasing page for [%s], from [%d] to [%d]!", url, from, to));
+					if (i % 20 == 0) {
+						log.info(String.format("Increasing page for [%s], from [%d] to [%d]!", url, from, i));
+					}
 					pts[size] = i;
 					String fm = MessageFormat.format(replace, pts);
 					try {
@@ -89,6 +91,7 @@ public class IncreasingRule extends BaseRuleImpl {
 						log.error(ex);
 					}
 				}
+				log.info(String.format("Increasing page for [%s], from [%d] to [%d]!", url, from, to));
 			}
 		}
 		return new DecisionInternal(DecisionInternal.RULE_ACCEPT);
