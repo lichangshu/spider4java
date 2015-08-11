@@ -160,6 +160,7 @@ public class AgentImpl implements Agent, CoreEventVisitor {
 				if (site.mustHandle()) {
 					((SiteInternal) site).registerRobotsTXTSkipped();
 					context.registerRobotsTXTSkipped(site);
+					storage.getSiteDAO().save(site);
 					eventDispatcher.dispatch(new RobotsTXTSkippedEvent(site));
 					if (newResource) {
 						scheduler.schedule(new DecideOnSpideringTask(context, event));
