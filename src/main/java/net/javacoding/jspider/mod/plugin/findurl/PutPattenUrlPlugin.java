@@ -102,20 +102,22 @@ public class PutPattenUrlPlugin implements Plugin {
 			}
 			HTTPHeader[] heads = rfe.getResource().getHeaders();
 			String charset = Charset.defaultCharset().toString();
-			for (HTTPHeader hd : heads) {
-				//Content-Type:text/html;charset=GBK
-				if ("Content-Type".equals(hd.getName())) {
-					int i = hd.getValue().indexOf("charset");
-					if (i >= 0) {
-						int ii = hd.getValue().indexOf(";", i);
-						if (ii < 0) {
-							ii = hd.getValue().length();
-						}
-						String cset = hd.getValue().substring(i, ii);
-						String[] sp = cset.split("=");
-						if (sp.length == 2) {
-							charset = sp[1].trim();
-							break;
+			if (heads != null) {
+				for (HTTPHeader hd : heads) {
+					//Content-Type:text/html;charset=GBK
+					if ("Content-Type".equals(hd.getName())) {
+						int i = hd.getValue().indexOf("charset");
+						if (i >= 0) {
+							int ii = hd.getValue().indexOf(";", i);
+							if (ii < 0) {
+								ii = hd.getValue().length();
+							}
+							String cset = hd.getValue().substring(i, ii);
+							String[] sp = cset.split("=");
+							if (sp.length == 2) {
+								charset = sp[1].trim();
+								break;
+							}
 						}
 					}
 				}
