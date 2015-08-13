@@ -43,6 +43,11 @@
       <artifactId>log4j</artifactId>
       <version>1.2.17</version>
     </dependency>
+    <dependency>
+      <groupId>net.sf.ehcache</groupId>
+      <artifactId>ehcache</artifactId>
+      <version>2.10.0</version>
+    </dependency>
   </dependencies>
   <properties>
     <maven.compiler.source>1.7</maven.compiler.source>
@@ -50,6 +55,11 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <build>
+    <resources>
+      <resource>
+        <directory>res/common</directory>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
