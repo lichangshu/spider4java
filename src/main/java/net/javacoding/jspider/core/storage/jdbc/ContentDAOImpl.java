@@ -25,10 +25,12 @@ class ContentDAOImpl implements ContentDAOSPI {
 		this.storage = storage;
 	}
 
+	private static String INSERT_JSPIDER_CONTENT_SQL = "insert into jspider_content ( id, content ) values ( ?, ? )";
+
 	public void setBytes(int id, byte[] bytes) {
 		try {
 			Connection connection = dbUtil.getConnection();
-			PreparedStatement ps = connection.prepareStatement("insert into jspider_content ( id, content ) values ( ?, ? )");
+			PreparedStatement ps = connection.prepareStatement(INSERT_JSPIDER_CONTENT_SQL);
 			ps.setInt(1, id);
 			ps.setBytes(2, bytes);
 			try {
@@ -43,13 +45,15 @@ class ContentDAOImpl implements ContentDAOSPI {
 		}
 	}
 
+	private static final String FIND_CONTENT_FROM_JSPIDER_CONTENT = "select content from jspider_content where id=?";
+
 	public InputStream getInputStream(int id) {
 		byte[] bytes = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
 			Connection connection = dbUtil.getConnection();
-			ps = connection.prepareStatement("select content from jspider_content where id=?");
+			ps = connection.prepareStatement(FIND_CONTENT_FROM_JSPIDER_CONTENT);
 			ps.setInt(1, id);
 			rs = ps.executeQuery();
 			if (rs.next()) {
