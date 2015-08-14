@@ -44,12 +44,15 @@ class DecisionDAOImpl implements DecisionDAOSPI {
 		saveDecision(SUBJECT_PARSE, resource, decision);
 	}
 
+	private static final String FIND_JSPIDER_DECISION = "insert into jspider_decision ( resource, subject, type, comment ) values (?,?,?,?)";
+	private static final String FIND_JSPIDER_DECISION_STEP = "insert into jspider_decision_step ( resource, subject, sequence, type, rule, decision, comment ) values (?,?,?,?,?,?,?)";
+
 	protected void saveDecision(int subject, ResourceInternal resource, DecisionInternal decision) {
 		PreparedStatement ps = null;
 		PreparedStatement ps2 = null;
 		try {
 			Connection connection = dbUtil.getConnection();
-			ps = connection.prepareStatement("insert into jspider_decision ( resource, subject, type, comment ) values (?,?,?,?)");
+			ps = connection.prepareStatement(FIND_JSPIDER_DECISION);
 			ps.setInt(1, resource.getId());
 			ps.setInt(2, (subject));
 			ps.setInt(3, (decision.getDecision()));
@@ -57,9 +60,10 @@ class DecisionDAOImpl implements DecisionDAOSPI {
 			ps.executeUpdate();
 
 			DecisionStep[] steps = decision.getSteps();
+			ps2 = connection.prepareStatement(FIND_JSPIDER_DECISION_STEP);
 			for (int i = 0; i < steps.length; i++) {
+				ps2.clearParameters();
 				DecisionStep step = steps[i];
-				ps2 = connection.prepareStatement("insert into jspider_decision_step ( resource, subject, sequence, type, rule, decision, comment ) values (?,?,?,?,?,?,?)");
 				ps2.setInt(1, resource.getId());
 				ps2.setInt(2, subject);
 				ps2.setInt(3, i);
@@ -94,6 +98,7 @@ class DecisionDAOImpl implements DecisionDAOSPI {
 		try {
 			Connection connection = dbUtil.getConnection();
 			ps = connection.prepareStatement("select * from jspider_decision where resource=? and subject=?");
+			ps2 = connection.prepareStatement("select * from jspider_decision_step where resource=? and subject=? order by sequence");
 			ps.setInt(1, resource.getId());
 			ps.setInt(2, subject);
 			rs = ps.executeQuery();
@@ -102,7 +107,7 @@ class DecisionDAOImpl implements DecisionDAOSPI {
 				String comment = rs.getString(ATTRIBUTE_COMMENT);
 				decision = new DecisionInternal(type, comment);
 
-				ps2 = connection.prepareStatement("select * from jspider_decision_step where resource=? and subject=? order by sequence");
+				ps2.clearParameters();
 				ps2.setInt(1, resource.getId());
 				ps2.setInt(2, subject);
 				rs2 = ps2.executeQuery();
