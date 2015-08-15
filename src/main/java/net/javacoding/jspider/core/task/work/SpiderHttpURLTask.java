@@ -16,10 +16,12 @@ import java.net.*;
 /**
  *
  * $Id: SpiderHttpURLTask.java,v 1.19 2003/04/10 16:19:14 vanrogu Exp $
+ * <br/>
+ * Use SerializableSpiderHttpURLTask replace !!
  *
  * @author G�nther Van Roey
  */
-public class SpiderHttpURLTask extends BaseWorkerTaskImpl {
+class SpiderHttpURLTask extends BaseWorkerTaskImpl {
 
 	public static final int TIME_OUT_MILLISECOND = 10000;//ms
 	protected URL url;
@@ -87,7 +89,7 @@ public class SpiderHttpURLTask extends BaseWorkerTaskImpl {
 					i = is.read();
 				}
 			} catch (IOException e) {
-				LogFactory.getLog(SpiderHttpURLTask.class).error("i/o exception during fetch : "+ url.toString(), e);
+				LogFactory.getLog(SpiderHttpURLTask.class).error("i/o exception during fetch : " + url.toString(), e);
 			}
 
 			String contentType = connection.getContentType();

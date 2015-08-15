@@ -1,11 +1,13 @@
 package net.javacoding.jspider.core.task.impl;
 
+import java.io.Serializable;
 import net.javacoding.jspider.core.exception.*;
 import net.javacoding.jspider.core.task.*;
 import net.javacoding.jspider.core.task.work.DecideOnSpideringTask;
 
 import java.net.URL;
 import java.util.*;
+import net.javacoding.jspider.core.cache.CacheFactory;
 
 /**
  * Default implementation of a Task scheduler
@@ -34,6 +36,10 @@ public class SchedulerImpl implements Scheduler {
 
 	protected int spiderTasksDone;
 	protected int thinkerTasksDone;
+	protected int cacheSize = 0;
+	public final String CACHE_PREFIX = "Task-" + SchedulerImpl.class.getSimpleName() + "-";
+
+	private static final int DEFAULT_FETCH_SIZE = 50;
 
 	protected Map blocked;
 
@@ -56,7 +62,7 @@ public class SchedulerImpl implements Scheduler {
 	}
 
 	public int getSpiderJobCount() {
-		return spiderTasksDone + assignedSpiderTasks.size() + fetchTasks.size();
+		return cacheSize + spiderTasksDone + assignedSpiderTasks.size() + fetchTasks.size();
 	}
 
 	public int getJobsDone() {
@@ -113,7 +119,13 @@ public class SchedulerImpl implements Scheduler {
 	 */
 	public synchronized void schedule(WorkerTask task) {
 		if (task.getType() == WorkerTask.WORKERTASK_SPIDERTASK) {
-			fetchTasks.add(task);
+			//is or not Serializable
+			if (fetchTasks.size() > DEFAULT_FETCH_SIZE && task instanceof Serializable) {
+				cacheSize += 1;
+				this.putCache((Serializable) task);
+			} else {
+				fetchTasks.add(task);
+			}
 		} else {
 			thinkerTasks.add(task);
 		}
@@ -159,6 +171,10 @@ public class SchedulerImpl implements Scheduler {
 			WorkerTask task = (WorkerTask) fetchTasks.remove(0);
 			assignedSpiderTasks.add(task);
 			return task;
+		} else if (cacheSize > 0) {
+			Serializable c = this.getCache();
+			cacheSize = cacheSize - 1;
+			return (WorkerTask) c;
 		}
 		if (allTasksDone()) {
 			throw new SpideringDoneException();
@@ -203,4 +219,16 @@ public class SchedulerImpl implements Scheduler {
 	 }
 	 return sb.toString();
 	 }   */
+	//must thread safe!
+	private String putCache(Serializable s) {
+		String key = CACHE_PREFIX + cacheSize;
+		CacheFactory.getCommonCache().cache(key, s);
+		return key;
+	}
+
+	//must thread safe! and not Clear! for simple not clear but you can!
+	private Serializable getCache() {
+		String key = CACHE_PREFIX + cacheSize;
+		return CacheFactory.getCommonCache().getCacheSerializable(key);
+	}
 }

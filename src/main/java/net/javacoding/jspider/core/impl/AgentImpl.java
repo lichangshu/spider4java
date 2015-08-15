@@ -21,7 +21,6 @@ import net.javacoding.jspider.core.util.URLUtil;
 
 import java.io.ByteArrayInputStream;
 import java.net.URL;
-import net.javacoding.jspider.core.cache.CacheFactory;
 
 /**
  *
@@ -31,13 +30,11 @@ import net.javacoding.jspider.core.cache.CacheFactory;
  */
 public class AgentImpl implements Agent, CoreEventVisitor {
 
-	private final static int RUN_TIME_MAX_TASK = 20;
 	protected Storage storage;
 	protected SpiderContext context;
 	protected EventDispatcher eventDispatcher;
 	protected Scheduler scheduler;
 	protected Log log;
-	private int index = 0;
 
 	public AgentImpl(SpiderContext context) {
 		this.context = context;
@@ -96,22 +93,10 @@ public class AgentImpl implements Agent, CoreEventVisitor {
 	 * @param foundURL
 	 */
 	public synchronized void scheduleForSpidering(URL foundURL) {
-		int size = scheduler.getSpiderJobCount();
-		if (size > RUN_TIME_MAX_TASK) {// cache Task !!
-			index = index + 1;
-			CacheFactory.getCommonCache().cache(createKey(index), foundURL);
-			if (index <= 1) {//have data NOT ADD!!
-				scheduler.schedule(CacheFlagWorkerTask.getCacheFlagWorkerTask(context));
-			}
-			log.debug("===== and " + createKey(index) + ": " + foundURL);
-		} else {
-			doURLFind(foundURL);
-		}
+		//Warp and then is Serializable
+		//scheduler.schedule(new SpiderHttpURLTask(context, foundURL, site));
+		scheduler.schedule(SerializableSpiderHttpURLTask.createCacheFlagWorkerTask(context, foundURL));
 		notifyAll();
-	}
-
-	private String createKey(int ii) {
-		return context.toString() + ii;
 	}
 
 	public synchronized void scheduleForParsing(URL url) {
@@ -124,30 +109,8 @@ public class AgentImpl implements Agent, CoreEventVisitor {
 		notifyAll();
 	}
 
-	public synchronized void visit(URL url, CoreEvent event) {
-		if (event instanceof LoadCacheURLFoundEvent) {
-			if (index > 0) {
-				URL foundURL = (URL) CacheFactory.getCommonCache().getCacheSerializable(createKey(index));
-				index = index - 1;
-				if(index > 0){//have data continue ADD!!
-					scheduler.schedule(CacheFlagWorkerTask.getCacheFlagWorkerTask(context));
-				}
-				log.debug("===== get " + createKey(index) + ": " + foundURL);
-				if (foundURL != null) {
-					doURLFind(foundURL);
-				}
-			}
-			notifyAll();
-		} else {
-			log.error("ERROR -- UNHANDLED COREEVENT IN AGENT !!!");
-		}
-	}
-
-	//must thread safe !!
-	private void doURLFind(URL foundURL) {
-		URL siteURL = URLUtil.getSiteURL(foundURL);
-		Site site = storage.getSiteDAO().find(siteURL);
-		scheduler.schedule(new SpiderHttpURLTask(context, foundURL, site));
+	public void visit(URL url, CoreEvent event) {
+		log.error("ERROR -- UNHANDLED COREEVENT IN AGENT !!!");
 	}
 
 	public void visit(URL url, URLSpideredOkEvent event) {
