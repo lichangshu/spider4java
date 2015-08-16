@@ -5,6 +5,8 @@ import net.javacoding.jspider.core.impl.CLI;
 import net.javacoding.jspider.core.util.config.ConfigurationFactory;
 
 import java.net.URL;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Main startup class.
@@ -17,6 +19,7 @@ import java.net.URL;
  */
 public class JSpider {
 
+	private static final Log logger = LogFactory.getLog(JSpider.class);
 	protected Spider spider;
 	protected SpiderContext context;
 
@@ -35,6 +38,17 @@ public class JSpider {
 	}
 
 	public static void main(String[] args) throws Exception {
+
+		Thread.UncaughtExceptionHandler handler = Thread.getDefaultUncaughtExceptionHandler();
+		if (handler == null) {
+			Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+
+				@Override
+				public void uncaughtException(Thread t, Throwable e) {
+					logger.error(String.format("Thread runtime exception %s, %d !", t.getName(), t.getId()), e);
+				}
+			});
+		}
 
 		CLI.printSignature();
 
