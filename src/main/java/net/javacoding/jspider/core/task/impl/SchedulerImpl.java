@@ -8,6 +8,8 @@ import net.javacoding.jspider.core.task.work.DecideOnSpideringTask;
 import java.net.URL;
 import java.util.*;
 import net.javacoding.jspider.core.cache.CacheFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Default implementation of a Task scheduler
@@ -18,6 +20,7 @@ import net.javacoding.jspider.core.cache.CacheFactory;
  */
 public class SchedulerImpl implements Scheduler {
 
+	private static final Log logger = LogFactory.getLog(SchedulerImpl.class);
 	/**
 	 * List of fetch tasks to be carried out.
 	 */
@@ -174,6 +177,10 @@ public class SchedulerImpl implements Scheduler {
 		} else if (cacheSize > 0) {
 			Serializable c = this.getCache();
 			cacheSize = cacheSize - 1;
+			if (c == null) {
+				logger.warn("get cache is null! it is a error! position: " + cacheSize);
+				throw new TaskAssignmentException();
+			}
 			return (WorkerTask) c;
 		}
 		if (allTasksDone()) {
