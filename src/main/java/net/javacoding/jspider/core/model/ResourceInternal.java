@@ -4,7 +4,7 @@ import net.javacoding.jspider.api.model.*;
 import net.javacoding.jspider.core.storage.exception.InvalidStateForActionException;
 import net.javacoding.jspider.core.storage.exception.InvalidStateTransitionException;
 import net.javacoding.jspider.core.storage.spi.StorageSPI;
-import net.javacoding.jspider.core.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 import net.javacoding.jspider.core.util.URLUtil;
 
 import java.io.InputStream;

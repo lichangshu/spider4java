@@ -1,8 +1,8 @@
 package net.javacoding.jspider.core.throttle;
 
 import net.javacoding.jspider.api.model.Site;
-import net.javacoding.jspider.core.logging.LogFactory;
-import net.javacoding.jspider.core.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 import net.javacoding.jspider.core.throttle.impl.DistributedLoadThrottleProvider;
 import net.javacoding.jspider.core.util.config.*;
 

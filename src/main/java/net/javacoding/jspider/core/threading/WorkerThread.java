@@ -1,7 +1,7 @@
 package net.javacoding.jspider.core.threading;
 
-import net.javacoding.jspider.core.logging.LogFactory;
-import net.javacoding.jspider.core.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 import net.javacoding.jspider.core.task.WorkerTask;
 
 /**

@@ -3,7 +3,7 @@ package net.javacoding.jspider.core.task.dispatch;
 import net.javacoding.jspider.core.Agent;
 import net.javacoding.jspider.core.SpiderContext;
 import net.javacoding.jspider.core.exception.*;
-import net.javacoding.jspider.core.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 import net.javacoding.jspider.core.threading.WorkerThreadPool;
 
 /**

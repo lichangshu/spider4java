@@ -1,8 +1,8 @@
 package net.javacoding.jspider.core.impl;
 
 import net.javacoding.jspider.core.dispatch.impl.PluginSocket;
-import net.javacoding.jspider.core.logging.Log;
-import net.javacoding.jspider.core.logging.LogFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import net.javacoding.jspider.core.util.config.*;
 import net.javacoding.jspider.spi.Plugin;
 

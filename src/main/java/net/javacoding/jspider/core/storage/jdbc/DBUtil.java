@@ -1,8 +1,8 @@
 package net.javacoding.jspider.core.storage.jdbc;
 
 import net.javacoding.jspider.core.util.config.PropertySet;
-import net.javacoding.jspider.core.logging.Log;
-import net.javacoding.jspider.core.logging.LogFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.net.URL;
 import java.sql.*;

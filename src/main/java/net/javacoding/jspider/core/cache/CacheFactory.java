@@ -12,6 +12,7 @@ import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.config.Configuration;
 import net.sf.ehcache.config.DiskStoreConfiguration;
+import net.sf.ehcache.config.PersistenceConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -45,7 +46,9 @@ public class CacheFactory {
 				conf.setMaxEntriesLocalHeap(20);// in memory
 				conf.setMaxEntriesLocalDisk(Integer.MAX_VALUE);
 				conf.setEternal(true);// never expired
-				conf.setDiskPersistent(false);
+				PersistenceConfiguration pcf = new PersistenceConfiguration();
+				pcf.strategy(PersistenceConfiguration.Strategy.LOCALTEMPSWAP);
+				conf.persistence(pcf).maxEntriesLocalDisk(0);
 				Configuration cf = new Configuration();
 				cf.addDiskStore(diskStoreConfiguration);
 				cf.addCache(conf);

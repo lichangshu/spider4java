@@ -9,8 +9,8 @@ import net.javacoding.jspider.api.event.resource.*;
 import net.javacoding.jspider.api.event.site.*;
 import net.javacoding.jspider.api.model.FetchTriedResource;
 import net.javacoding.jspider.api.model.Resource;
-import net.javacoding.jspider.core.logging.Log;
-import net.javacoding.jspider.core.logging.LogFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import net.javacoding.jspider.core.util.config.ConfigurationFactory;
 import net.javacoding.jspider.spi.Plugin;
 

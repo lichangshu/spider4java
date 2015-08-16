@@ -4,8 +4,8 @@ import net.javacoding.jspider.core.storage.spi.FolderDAOSPI;
 import net.javacoding.jspider.core.storage.spi.StorageSPI;
 import net.javacoding.jspider.core.model.SiteInternal;
 import net.javacoding.jspider.core.model.FolderInternal;
-import net.javacoding.jspider.core.logging.Log;
-import net.javacoding.jspider.core.logging.LogFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.sql.*;
 import java.util.ArrayList;

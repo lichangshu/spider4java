@@ -5,8 +5,8 @@ import net.javacoding.jspider.core.model.*;
 import net.javacoding.jspider.core.storage.spi.ResourceDAOSPI;
 import net.javacoding.jspider.core.storage.spi.StorageSPI;
 import net.javacoding.jspider.core.storage.exception.InvalidStateTransitionException;
-import net.javacoding.jspider.core.logging.LogFactory;
-import net.javacoding.jspider.core.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 
 import java.net.MalformedURLException;
 import java.net.URL;

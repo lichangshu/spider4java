@@ -3,8 +3,8 @@ package net.javacoding.jspider.core.throttle.impl;
 import net.javacoding.jspider.core.throttle.Throttle;
 import net.javacoding.jspider.core.throttle.ThrottleProvider;
 import net.javacoding.jspider.core.util.config.PropertySet;
-import net.javacoding.jspider.core.logging.LogFactory;
-import net.javacoding.jspider.core.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 
 /**
  * Throttle provider class for the Distributed Load Throttle implementation.

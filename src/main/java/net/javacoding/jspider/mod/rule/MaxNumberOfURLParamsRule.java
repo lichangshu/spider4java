@@ -2,8 +2,8 @@ package net.javacoding.jspider.mod.rule;
 
 import net.javacoding.jspider.core.rule.impl.BaseRuleImpl;
 import net.javacoding.jspider.core.util.config.PropertySet;
-import net.javacoding.jspider.core.logging.LogFactory;
-import net.javacoding.jspider.core.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 import net.javacoding.jspider.core.SpiderContext;
 import net.javacoding.jspider.core.model.DecisionInternal;
 import net.javacoding.jspider.api.model.Decision;

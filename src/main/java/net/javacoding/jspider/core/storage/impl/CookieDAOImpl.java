@@ -3,7 +3,7 @@ package net.javacoding.jspider.core.storage.impl;
 import net.javacoding.jspider.core.storage.CookieDAO;
 import net.javacoding.jspider.core.storage.spi.CookieDAOSPI;
 import net.javacoding.jspider.core.storage.spi.StorageSPI;
-import net.javacoding.jspider.core.logging.Log;
+import org.apache.commons.logging.Log;
 import net.javacoding.jspider.core.model.SiteInternal;
 import net.javacoding.jspider.api.model.Cookie;
 import net.javacoding.jspider.api.model.Site;

@@ -4,8 +4,8 @@
 package net.javacoding.jspider.core.task;
 
 import net.javacoding.jspider.core.SpiderContext;
-import net.javacoding.jspider.core.logging.LogFactory;
-import net.javacoding.jspider.core.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 import net.javacoding.jspider.core.task.impl.DefaultSchedulerProvider;
 import net.javacoding.jspider.core.task.impl.SchedulerMonitorThread;
 import net.javacoding.jspider.core.util.config.*;

@@ -3,7 +3,7 @@ package net.javacoding.jspider.core.storage.impl;
 import net.javacoding.jspider.core.storage.*;
 import net.javacoding.jspider.core.storage.spi.StorageSPI;
 import net.javacoding.jspider.core.util.config.PropertySet;
-import net.javacoding.jspider.core.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 import net.javacoding.jspider.core.model.SummaryInternal;
 import net.javacoding.jspider.api.model.Summary;
 import net.javacoding.jspider.api.model.Resource;

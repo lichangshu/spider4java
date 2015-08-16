@@ -3,7 +3,7 @@ package net.javacoding.jspider.core.task.work;
 import net.javacoding.jspider.api.model.HTTPHeader;
 import net.javacoding.jspider.api.model.Site;
 import net.javacoding.jspider.core.SpiderContext;
-import net.javacoding.jspider.core.logging.LogFactory;
+import org.apache.commons.logging.LogFactory;
 import net.javacoding.jspider.core.event.CoreEvent;
 import net.javacoding.jspider.core.event.impl.*;
 import net.javacoding.jspider.core.task.WorkerTask;

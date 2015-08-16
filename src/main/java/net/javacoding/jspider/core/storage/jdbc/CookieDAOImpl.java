@@ -3,8 +3,8 @@ package net.javacoding.jspider.core.storage.jdbc;
 import net.javacoding.jspider.core.storage.CookieDAO;
 import net.javacoding.jspider.core.storage.spi.CookieDAOSPI;
 import net.javacoding.jspider.core.storage.spi.StorageSPI;
-import net.javacoding.jspider.core.logging.LogFactory;
-import net.javacoding.jspider.core.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 import net.javacoding.jspider.api.model.Cookie;
 
 import java.util.*;

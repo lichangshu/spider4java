@@ -1,7 +1,7 @@
 package net.javacoding.jspider.mod.plugin.filewriter;
 
-import net.javacoding.jspider.core.logging.Log;
-import net.javacoding.jspider.core.logging.LogFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import net.javacoding.jspider.core.util.config.ConfigurationFactory;
 import net.javacoding.jspider.core.util.config.PropertySet;
 import net.javacoding.jspider.mod.plugin.FlatOutputPlugin;

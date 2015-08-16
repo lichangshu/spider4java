@@ -5,8 +5,8 @@ import net.javacoding.jspider.api.event.JSpiderEvent;
 import net.javacoding.jspider.core.dispatch.EventDispatcher;
 import net.javacoding.jspider.core.util.config.PropertySet;
 import net.javacoding.jspider.core.util.config.ConfigConstants;
-import net.javacoding.jspider.core.logging.Log;
-import net.javacoding.jspider.core.logging.LogFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import net.javacoding.jspider.spi.EventFilter;
 import net.javacoding.jspider.mod.eventfilter.AllowAllEventFilter;
 

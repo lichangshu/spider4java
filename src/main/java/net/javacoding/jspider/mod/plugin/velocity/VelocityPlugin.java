@@ -2,8 +2,8 @@ package net.javacoding.jspider.mod.plugin.velocity;
 
 import net.javacoding.jspider.api.event.JSpiderEvent;
 import net.javacoding.jspider.api.event.engine.SpideringStoppedEvent;
-import net.javacoding.jspider.core.logging.Log;
-import net.javacoding.jspider.core.logging.LogFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import net.javacoding.jspider.core.util.config.*;
 import net.javacoding.jspider.spi.Plugin;
 import org.apache.velocity.Template;

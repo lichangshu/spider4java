@@ -4,7 +4,7 @@ import net.javacoding.jspider.core.storage.DecisionDAO;
 import net.javacoding.jspider.core.storage.Storage;
 import net.javacoding.jspider.core.storage.spi.DecisionDAOSPI;
 import net.javacoding.jspider.core.storage.spi.StorageSPI;
-import net.javacoding.jspider.core.logging.Log;
+import org.apache.commons.logging.Log;
 import net.javacoding.jspider.core.model.DecisionInternal;
 import net.javacoding.jspider.core.model.ResourceInternal;
 import net.javacoding.jspider.api.model.Resource;

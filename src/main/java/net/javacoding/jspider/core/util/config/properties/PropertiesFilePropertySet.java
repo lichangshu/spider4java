@@ -1,8 +1,8 @@
 package net.javacoding.jspider.core.util.config.properties;
 
 import net.javacoding.jspider.core.util.config.PropertySet;
-import net.javacoding.jspider.core.logging.LogFactory;
-import net.javacoding.jspider.core.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 
 import java.io.*;
 import java.util.*;

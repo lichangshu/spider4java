@@ -3,8 +3,8 @@ package net.javacoding.jspider.core.rule;
 import net.javacoding.jspider.api.model.Site;
 import net.javacoding.jspider.core.rule.impl.RuleSetImpl;
 import net.javacoding.jspider.core.util.config.*;
-import net.javacoding.jspider.core.logging.LogFactory;
-import net.javacoding.jspider.core.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 import net.javacoding.jspider.spi.Rule;
 
 import java.util.ArrayList;

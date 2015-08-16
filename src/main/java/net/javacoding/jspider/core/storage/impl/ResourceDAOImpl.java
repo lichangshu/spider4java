@@ -5,7 +5,7 @@ import net.javacoding.jspider.core.storage.exception.InvalidStateTransitionExcep
 import net.javacoding.jspider.core.storage.spi.ResourceDAOSPI;
 import net.javacoding.jspider.core.storage.spi.StorageSPI;
 import net.javacoding.jspider.core.event.impl.*;
-import net.javacoding.jspider.core.logging.Log;
+import org.apache.commons.logging.Log;
 import net.javacoding.jspider.core.model.*;
 import net.javacoding.jspider.core.util.URLUtil;
 import net.javacoding.jspider.api.model.*;

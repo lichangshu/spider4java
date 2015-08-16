@@ -2,8 +2,8 @@ package net.javacoding.jspider.mod.plugin.console;
 
 import net.javacoding.jspider.mod.plugin.FlatOutputPlugin;
 import net.javacoding.jspider.core.util.config.PropertySet;
-import net.javacoding.jspider.core.logging.Log;
-import net.javacoding.jspider.core.logging.LogFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  *
