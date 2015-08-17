@@ -12,7 +12,6 @@ import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.config.Configuration;
 import net.sf.ehcache.config.DiskStoreConfiguration;
-import net.sf.ehcache.config.PersistenceConfiguration;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -41,18 +40,19 @@ public class CacheFactory {
 
 		public CommonCacheImp() {
 			try {
-				DiskStoreConfiguration diskStoreConfiguration = new DiskStoreConfiguration();
-				CacheConfiguration conf = new CacheConfiguration("disk_cache_task", 5);
-				conf.setMaxEntriesLocalHeap(20);// in memory
-				conf.setMaxEntriesLocalDisk(Integer.MAX_VALUE);
-				conf.setEternal(true);// never expired
-				PersistenceConfiguration pcf = new PersistenceConfiguration();
-				pcf.strategy(PersistenceConfiguration.Strategy.LOCALTEMPSWAP);
-				conf.persistence(pcf).maxEntriesLocalDisk(0);
-				Configuration cf = new Configuration();
-				cf.addDiskStore(diskStoreConfiguration);
-				cf.addCache(conf);
-				CacheManager manager = CacheManager.create(cf);
+				CacheConfiguration def = new CacheConfiguration();
+				def.setName("deault");
+				CacheConfiguration cache = new CacheConfiguration();
+				cache.setName("disk_cache_task");
+				cache.setMaxElementsInMemory(5);// in memory
+				cache.setEternal(true);// never expired
+				cache.setDiskPersistent(false);
+				cache.setOverflowToDisk(true);
+				Configuration config = new Configuration();
+				config.addDiskStore(new DiskStoreConfiguration());
+				config.addCache(cache);
+				config.setDefaultCacheConfiguration(def);
+				CacheManager manager = new CacheManager(config);
 				this.mcache = manager.getCache("disk_cache_task");
 			} catch (CacheException ex) {
 				throw new RuntimeException(ex);

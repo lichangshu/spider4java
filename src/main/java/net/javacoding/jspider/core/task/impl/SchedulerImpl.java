@@ -40,7 +40,7 @@ public class SchedulerImpl implements Scheduler {
 	protected int spiderTasksDone;
 	protected int thinkerTasksDone;
 	protected int cacheSize = 0;
-	public final String CACHE_PREFIX = "Task-" + SchedulerImpl.class.getSimpleName() + "-";
+	public static final String CACHE_PREFIX = "Task-" + SchedulerImpl.class.getSimpleName() + "-";
 
 	private static final int DEFAULT_FETCH_SIZE = 50;
 
@@ -169,6 +169,7 @@ public class SchedulerImpl implements Scheduler {
 	 * @throws TaskAssignmentException notifies when the work is done or there
 	 * are no current outstanding tasks.
 	 */
+	@Override
 	public synchronized WorkerTask getFethTask() throws TaskAssignmentException {
 		if (fetchTasks.size() > 0) {
 			WorkerTask task = (WorkerTask) fetchTasks.remove(0);
@@ -176,10 +177,9 @@ public class SchedulerImpl implements Scheduler {
 			return task;
 		} else if (cacheSize > 0) {
 			Serializable c = this.getCache();
-			cacheSize = cacheSize - 1;
-			if (c == null) {
-				logger.warn("get cache is null! it is a error! position: " + cacheSize);
-				throw new TaskAssignmentException();
+			while (c != null) {
+				cacheSize = cacheSize - 1;
+				logger.warn("Get cache is null! It is a ehcache config Bug, must reconfiger it! position: " + cacheSize);
 			}
 			return (WorkerTask) c;
 		}

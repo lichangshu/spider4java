@@ -46,7 +46,7 @@
     <dependency>
       <groupId>net.sf.ehcache</groupId>
       <artifactId>ehcache</artifactId>
-      <version>2.10.0</version>
+      <version>1.6.2</version>
     </dependency>
   </dependencies>
   <properties>
@@ -67,7 +67,7 @@
         <version>2.12.4</version>
         <configuration>
           <testFailureIgnore>true</testFailureIgnore>
-          <skip>true</skip>
+          <skip>false</skip>
         </configuration>
       </plugin>
       <plugin>
