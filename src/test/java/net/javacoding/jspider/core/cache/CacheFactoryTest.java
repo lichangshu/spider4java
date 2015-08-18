@@ -6,7 +6,6 @@
 package net.javacoding.jspider.core.cache;
 
 import junit.framework.TestCase;
-import net.javacoding.jspider.core.task.impl.SchedulerImpl;
 
 /**
  *
@@ -20,21 +19,12 @@ public class CacheFactoryTest extends TestCase {
 		CommonCache result = CacheFactory.getCommonCache();
 //		assertNull(result.getCacheSerializable("test-" + 1));
 		for (int i = 0; i < size; i++) {
-			result.cache("test-" + i, "1");
+			result.cache("test-" + i, "https://www.baidu.com/s?wd=fileinputstream&rsv_spt=1&issp=1&f=8&rsv_bp=1&rsv_idx=2&ie=utf-8&tn=baiduhome_pg&rsv_enter=1&oq=ehcache%20%E5%AE%98%E7%BD%91&rsv_t=3334XG8IJ2barFSEW35%2BwRcXFAGXzk9VIvyRmXbOSekPCuRBGkRcN1ep7TEMYyCCDptY&inputT=3470&rsv_pq=f8831cba00016c05&rsv_sug3=56&rsv_sug1=30&bs=ehcache%20%E5%AE%98%E7%BD%91");
 			assertNotNull(result.getCacheSerializable("test-" + i));
 		}
 
 		for (int i = 0; i < size; i++) {
 			assertNotNull(result.getCacheSerializable("test-" + i));
-		}
-	}
-
-	public void _testSchedulerImpl(){
-		CommonCache cc = CacheFactory.getCommonCache();
-		cc.cache("test-", 1);
-		for(int i=1; i<100; i++){
-			System.err.print(i + ",   ");
-			assertNotNull(cc.getCacheSerializable(SchedulerImpl.CACHE_PREFIX + i));
 		}
 	}
 }

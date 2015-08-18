@@ -35,23 +35,15 @@ public class CacheFactory {
 
 		private CommonCacheImp() {
 			try {
-				CacheConfiguration def = new CacheConfiguration();
-				def.setName("default");
-				CacheConfiguration cache = new CacheConfiguration();
-				cache.setName("disk_cache_task");
-				cache.setMaxElementsInMemory(5);// in memory
+				CacheConfiguration cache = new CacheConfiguration("disk_cache_task", 5);
 				cache.setEternal(true);// never expired
 				cache.setDiskPersistent(false);
 				cache.setOverflowToDisk(true);
-				cache.setTimeToIdleSeconds(0);
-				cache.setTimeToLiveSeconds(0);
 				Configuration config = new Configuration();
 				DiskStoreConfiguration disk = new DiskStoreConfiguration();
-				disk.setPath("user.dir");
-				logger.info("Cache file path :" + disk.getPath());
 				config.addDiskStore(disk);
 				config.addCache(cache);
-				config.setDefaultCacheConfiguration(def);
+				config.setDefaultCacheConfiguration(new CacheConfiguration("default", 1));
 				CacheManager manager = new CacheManager(config);
 				this.mcache = manager.getCache("disk_cache_task");
 			} catch (CacheException ex) {
