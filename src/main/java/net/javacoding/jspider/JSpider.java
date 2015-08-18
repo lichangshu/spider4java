@@ -45,7 +45,7 @@ public class JSpider {
 
 				@Override
 				public void uncaughtException(Thread t, Throwable e) {
-					logger.error(String.format("Thread runtime exception %s, %d !", t.getName(), t.getId()), e);
+					logger.error(String.format("Thread runtime exception [%s:%d] !", t.getName(), t.getId()), e);
 				}
 			});
 		}
