@@ -15,7 +15,7 @@ public interface SiteDAOSPI {
 
 	public void create(int id, SiteInternal site);
 
-	public void save(int is, SiteInternal site);
+	public void save(int id, SiteInternal site);
 
 	public SiteInternal[] findAll();
 
