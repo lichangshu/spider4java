@@ -55,11 +55,11 @@ class ResourceDAOImpl implements ResourceDAOSPI {
 				st = connection.createStatement();
 				rs = st.executeQuery("select count(*) from jspider_resource_reference where referer = " + from + " and referee = " + to);
 				rs.next();
-				Statement st2 = connection.createStatement();
+//				Statement st2 = connection.createStatement();
 				if (rs.getInt(1) == 0) {
-					st2.executeUpdate("insert into jspider_resource_reference ( referer, referee, count ) values (" + from + "," + to + ", 1)");
+					st.executeUpdate("insert into jspider_resource_reference ( referer, referee, count ) values (" + from + "," + to + ", 1)");
 				} else {
-					st2.executeUpdate("update jspider_resource_reference set count = count + 1 where referer = " + from + " and referee = " + to);
+					st.executeUpdate("update jspider_resource_reference set count = count + 1 where referer = " + from + " and referee = " + to);
 				}
 			} catch (SQLException e) {
 				log.error("SQLException", e);

@@ -29,26 +29,26 @@ class EMailAddressDAOImpl implements EMailAddressDAOSPI {
 		Connection connection = dbUtil.getConnection();
 
 		Statement st = null;
-		ResultSet rs = null;
+		ResultSet rs1 = null, rs2 = null, rs3 = null;
 
 		try {
 			st = connection.createStatement();
-			rs = st.executeQuery("select count(*) as count from jspider_email_address where address='" + address.getAddress() + "'");
-			rs.next();
-			int count = rs.getInt("count");
+			rs1 = st.executeQuery("select count(*) as count from jspider_email_address where address='" + address.getAddress() + "'");
+			rs1.next();
+			int count = rs1.getInt("count");
 			if (count == 0) {
-				st = connection.createStatement();
+//				st = connection.createStatement();
 				st.executeUpdate("insert into jspider_email_address ( address ) values ( '" + address.getAddress() + "' )");
-				st = connection.createStatement();
-				ResultSet rs2 = st.executeQuery("select id from jspider_email_address where address = '" + address.getAddress() + "'");
+//				st = connection.createStatement();
+				rs2 = st.executeQuery("select id from jspider_email_address where address = '" + address.getAddress() + "'");
 				rs2.next();
 				address.setId(rs2.getInt("id"));
 			}
 
-			rs = st.executeQuery("select count(*) as count from jspider_email_address, jspider_email_address_reference where jspider_email_address_reference.resource=" + resource.getId() + " and jspider_email_address_reference.address = jspider_email_address.id and jspider_email_address.id = " + address.getId());
-			rs.next();
-			st = connection.createStatement();
-			if (rs.getInt("count") == 0) {
+			rs3 = st.executeQuery("select count(*) as count from jspider_email_address, jspider_email_address_reference where jspider_email_address_reference.resource=" + resource.getId() + " and jspider_email_address_reference.address = jspider_email_address.id and jspider_email_address.id = " + address.getId());
+			rs3.next();
+//			st = connection.createStatement();
+			if (rs3.getInt("count") == 0) {
 				st.executeUpdate("insert into jspider_email_address_reference ( resource, address, count ) values ( " + resource.getId() + "," + address.getId() + ", 1 )");
 			} else {
 				st.executeUpdate("update jspider_email_address_reference set count = count + 1 where address = " + address.getId() + " and resource = " + resource.getId());
@@ -56,7 +56,7 @@ class EMailAddressDAOImpl implements EMailAddressDAOSPI {
 		} catch (SQLException e) {
 			log.error("SQLException", e);
 		} finally {
-			dbUtil.safeClose(rs, log);
+			dbUtil.safeClose(log, rs1, rs2, rs3);
 			dbUtil.safeClose(st, log);
 		}
 	}

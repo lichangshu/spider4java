@@ -51,21 +51,20 @@ class CookieDAOImpl implements CookieDAOSPI {
 	public void save(int id, Cookie[] cookies) {
 		Connection connection = dbUtil.getConnection();
 
-		Statement st = null;
-		ResultSet rs = null;
-
-		for (int i = 0; i < cookies.length; i++) {
-			Cookie cookie = cookies[i];
+		for (Cookie cookie1 : cookies) {
+			Statement st = null;
+			ResultSet rs = null;
+			Cookie cookie = cookie1;
 			try {
 				st = connection.createStatement();
 				rs = st.executeQuery("select count(*) as count from jspider_cookie where id='" + id + "' and name='" + cookie.getName() + "'");
 				rs.next();
 				int count = rs.getInt("count");
 				if (count == 0) {
-					st = connection.createStatement();
+//					st = connection.createStatement();
 					st.executeUpdate("insert into jspider_cookie ( site, name, value, path, expires, domain ) values ( '" + id + "', '" + cookie.getName() + "', '" + cookie.getValue() + "', '" + cookie.getPath() + "', '" + cookie.getExpires() + "', '" + cookie.getDomain() + "')");
 				} else {
-					st = connection.createStatement();
+//					st = connection.createStatement();
 					st.executeUpdate("update jspider_cookie set value='" + cookie.getValue() + "', path='" + cookie.getPath() + "', domain='" + cookie.getDomain() + "', expires='" + cookie.getExpires() + "' where site='" + id + "' and name='" + cookie.getName() + "'");
 				}
 			} catch (SQLException e) {

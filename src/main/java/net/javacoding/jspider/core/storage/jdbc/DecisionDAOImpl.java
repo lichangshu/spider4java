@@ -122,10 +122,8 @@ class DecisionDAOImpl implements DecisionDAOSPI {
 		} catch (SQLException e) {
 			log.error("SQLException", e);
 		} finally {
-			dbUtil.safeClose(rs, log);
-			dbUtil.safeClose(ps, log);
-			dbUtil.safeClose(rs2, log);
-			dbUtil.safeClose(ps2, log);
+			dbUtil.safeClose(log, rs, rs2);
+			dbUtil.safeClose(log, ps2, ps);
 		}
 		return decision;
 	}

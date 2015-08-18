@@ -66,6 +66,12 @@ class DBUtil {
 		return connection;
 	}
 
+	public void safeClose(Log log, ResultSet... rss) {
+		for (ResultSet rs : rss) {
+			safeClose(rs, log);
+		}
+	}
+
 	public void safeClose(ResultSet rs, Log log) {
 		if (rs != null) {
 			try {
@@ -73,6 +79,12 @@ class DBUtil {
 			} catch (SQLException e) {
 				log.error("error closing resultset", e);
 			}
+		}
+	}
+
+	public void safeClose(Log log, Statement... sts) {
+		for (Statement st : sts) {
+			this.safeClose(st, log);
 		}
 	}
 
