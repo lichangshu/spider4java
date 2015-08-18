@@ -7,7 +7,7 @@ import net.javacoding.jspider.core.task.work.DecideOnSpideringTask;
 
 import java.net.URL;
 import java.util.*;
-import net.javacoding.jspider.core.cache.CacheFactory;
+import net.javacoding.jspider.core.cache.CacheStack;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -26,6 +26,8 @@ public class SchedulerImpl implements Scheduler {
 	 */
 	protected List fetchTasks;
 
+	protected CacheStack cache;
+
 	/**
 	 * List of thinker tasks to be carried out.
 	 */
@@ -39,10 +41,6 @@ public class SchedulerImpl implements Scheduler {
 
 	protected int spiderTasksDone;
 	protected int thinkerTasksDone;
-	protected int cacheSize = 0;
-	public static final String CACHE_PREFIX = "Task-" + SchedulerImpl.class.getSimpleName() + "-";
-
-	private static final int DEFAULT_FETCH_SIZE = 50;
 
 	protected Map blocked;
 
@@ -65,7 +63,7 @@ public class SchedulerImpl implements Scheduler {
 	}
 
 	public int getSpiderJobCount() {
-		return cacheSize + spiderTasksDone + assignedSpiderTasks.size() + fetchTasks.size();
+		return cache.size() + spiderTasksDone + assignedSpiderTasks.size() + fetchTasks.size();
 	}
 
 	public int getJobsDone() {
@@ -85,6 +83,7 @@ public class SchedulerImpl implements Scheduler {
 	 */
 	public SchedulerImpl() {
 		fetchTasks = new ArrayList();
+		cache = new CacheStack();
 		thinkerTasks = new ArrayList();
 		assignedThinkerTasks = new HashSet();
 		assignedSpiderTasks = new HashSet();
@@ -120,12 +119,12 @@ public class SchedulerImpl implements Scheduler {
 	 *
 	 * @param task task to be scheduled
 	 */
+	@Override
 	public synchronized void schedule(WorkerTask task) {
 		if (task.getType() == WorkerTask.WORKERTASK_SPIDERTASK) {
 			//is or not Serializable
-			if (fetchTasks.size() > DEFAULT_FETCH_SIZE && task instanceof Serializable) {
-				cacheSize += 1;
-				this.putCache((Serializable) task);
+			if (task instanceof Serializable) {
+				cache.push((Serializable) task);
 			} else {
 				fetchTasks.add(task);
 			}
@@ -175,12 +174,14 @@ public class SchedulerImpl implements Scheduler {
 			WorkerTask task = (WorkerTask) fetchTasks.remove(0);
 			assignedSpiderTasks.add(task);
 			return task;
-		} else if (cacheSize > 0) {
-			Serializable c = this.getCache();
-			while (c != null) {
-				cacheSize = cacheSize - 1;
-				logger.warn("Get cache is null! It is a ehcache config Bug, must reconfiger it! position: " + cacheSize);
+		} else if (!cache.isEmpty()) {
+			Serializable c = cache.pop();
+			if (c == null) {
+				logger.warn(String.format("get cache is null! it is a error! position: %d, [%s] ",
+						cache.size() + 1, cache.prefix()));
+				throw new NoSuitableItemFoundException();
 			}
+			assignedSpiderTasks.add(c);
 			return (WorkerTask) c;
 		}
 		if (allTasksDone()) {
@@ -197,12 +198,14 @@ public class SchedulerImpl implements Scheduler {
 	 *
 	 * @return boolean value determining whether all work is done
 	 */
+	@Override
 	public synchronized boolean allTasksDone() {
-		return (fetchTasks.size() == 0
-				&& thinkerTasks.size() == 0
-				&& assignedSpiderTasks.size() == 0
-				&& assignedThinkerTasks.size() == 0
-				&& blocked.size() == 0);
+		return (fetchTasks.isEmpty()
+				&& cache.isEmpty()
+				&& thinkerTasks.isEmpty()
+				&& assignedSpiderTasks.isEmpty()
+				&& assignedThinkerTasks.isEmpty()
+				&& blocked.isEmpty());
 	}
 
 	/*
@@ -226,16 +229,4 @@ public class SchedulerImpl implements Scheduler {
 	 }
 	 return sb.toString();
 	 }   */
-	//must thread safe!
-	private String putCache(Serializable s) {
-		String key = CACHE_PREFIX + cacheSize;
-		CacheFactory.getCommonCache().cache(key, s);
-		return key;
-	}
-
-	//must thread safe! and not Clear! for simple not clear but you can!
-	private Serializable getCache() {
-		String key = CACHE_PREFIX + cacheSize;
-		return CacheFactory.getCommonCache().getCacheSerializable(key);
-	}
 }
