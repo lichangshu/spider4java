@@ -23,11 +23,6 @@ public class CacheFactory {
 
 	private static final Log logger = LogFactory.getLog(CacheFactory.class);
 
-	/**
-	 * 一个小时过期
-	 *
-	 * @return
-	 */
 	public static CommonCache getCommonCache() {
 		return CommonCacheImp.ccache;
 	}
@@ -38,18 +33,23 @@ public class CacheFactory {
 
 		private Cache mcache;
 
-		public CommonCacheImp() {
+		private CommonCacheImp() {
 			try {
 				CacheConfiguration def = new CacheConfiguration();
-				def.setName("deault");
+				def.setName("default");
 				CacheConfiguration cache = new CacheConfiguration();
 				cache.setName("disk_cache_task");
 				cache.setMaxElementsInMemory(5);// in memory
 				cache.setEternal(true);// never expired
 				cache.setDiskPersistent(false);
 				cache.setOverflowToDisk(true);
+				cache.setTimeToIdleSeconds(0);
+				cache.setTimeToLiveSeconds(0);
 				Configuration config = new Configuration();
-				config.addDiskStore(new DiskStoreConfiguration());
+				DiskStoreConfiguration disk = new DiskStoreConfiguration();
+				disk.setPath("user.dir");
+				logger.info("Cache file path :" + disk.getPath());
+				config.addDiskStore(disk);
 				config.addCache(cache);
 				config.setDefaultCacheConfiguration(def);
 				CacheManager manager = new CacheManager(config);
