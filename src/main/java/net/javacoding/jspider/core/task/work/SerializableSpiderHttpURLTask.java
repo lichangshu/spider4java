@@ -16,18 +16,22 @@ import net.javacoding.jspider.api.model.Site;
 import net.javacoding.jspider.core.SpiderContext;
 import net.javacoding.jspider.core.task.WorkerTask;
 import net.javacoding.jspider.core.util.URLUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  *
  * @author changshu.li
  */
-public class SerializableSpiderHttpURLTask extends BaseWorkerTaskImpl implements Serializable {
+public class SerializableSpiderHttpURLTask implements WorkerTask, Serializable {
 
+	private static Log log = LogFactory.getLog(SerializableSpiderHttpURLTask.class);
 	private final static Map<String, SpiderContext> contexts = new HashMap();
 
 	private URL foundURL;
 	private String contextToString;
-	private SpiderHttpURLTask task;
+	transient private SpiderHttpURLTask task;
+	transient private SpiderContext context;
 
 	/**
 	 * each SpiderContext must have different cache dir !!
@@ -51,8 +55,8 @@ public class SerializableSpiderHttpURLTask extends BaseWorkerTaskImpl implements
 		return new SerializableSpiderHttpURLTask(context, foundURL);
 	}
 
-	private SerializableSpiderHttpURLTask(SpiderContext context, URL findURL) {
-		super(context, WorkerTask.WORKERTASK_SPIDERTASK);
+	public SerializableSpiderHttpURLTask(SpiderContext context, URL findURL) {
+		this.context = context;
 		this.foundURL = findURL;
 		this.contextToString = context.toString();
 	}
@@ -77,16 +81,28 @@ public class SerializableSpiderHttpURLTask extends BaseWorkerTaskImpl implements
 	//=======================
 	//自己实现序列化方法
 	private void writeObject(ObjectOutputStream out) throws IOException {
+		out.defaultWriteObject();
 		out.writeObject(this.foundURL);
 		out.writeObject(this.contextToString);
 	}
 
 	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+		in.defaultReadObject();
 		this.foundURL = (URL) in.readObject();
 		this.contextToString = (String) in.readObject();
 		this.context = contexts.get(contextToString);
 		if (this.context == null) {
 			throw new IOException("Not find context !");
 		}
+	}
+
+	@Override
+	public int getType() {
+		return WorkerTask.WORKERTASK_SPIDERTASK;
+	}
+
+	@Override
+	public void tearDown() {
+		task.tearDown();
 	}
 }
