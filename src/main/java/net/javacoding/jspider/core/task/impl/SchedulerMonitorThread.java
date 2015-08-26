@@ -16,7 +16,6 @@ public class SchedulerMonitorThread extends MonitorThread {
 	public SchedulerMonitorThread(Scheduler scheduler, EventDispatcher dispatcher, int interval) {
 		super(dispatcher, interval, "Job Scheduler");
 		this.scheduler = scheduler;
-		start();
 	}
 
 	public MonitorEvent doMonitorTask() {

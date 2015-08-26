@@ -28,7 +28,7 @@ public class SchedulerFactory {
 			PropertySet monitoringProps = new MappedPropertySet(ConfigConstants.CONFIG_SCHEDULER_MONITORING, schedulerProps);
 			if (monitoringProps.getBoolean(ConfigConstants.CONFIG_SCHEDULER_MONITORING_ENABLED, false)) {
 				int interval = monitoringProps.getInteger(ConfigConstants.CONFIG_SCHEDULER_MONITORING_INTERVAL, DEFAULT_MONITORING_INTERVAL);
-				new SchedulerMonitorThread(scheduler, context.getEventDispatcher(), interval);
+				new SchedulerMonitorThread(scheduler, context.getEventDispatcher(), interval).start();
 			}
 			return scheduler;
 		} catch (InstantiationException e) {

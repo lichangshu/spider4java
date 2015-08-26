@@ -3,6 +3,7 @@ package net.javacoding.jspider.core.impl;
 import net.javacoding.jspider.api.event.engine.*;
 import net.javacoding.jspider.core.Spider;
 import net.javacoding.jspider.core.SpiderContext;
+import net.javacoding.jspider.core.cache.CacheFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import net.javacoding.jspider.core.task.dispatch.DispatchSpiderTasks;
@@ -23,6 +24,7 @@ public class SpiderImpl implements Spider {
 
 	protected WorkerThreadPool spiders;
 	protected WorkerThreadPool thinkers;
+	protected ThreadPoolMonitorThread monitorThread;
 
 	public SpiderImpl(SpiderContext context, int spiderThreads, int thinkerThreads) {
 		LogFactory.getLog(Spider.class).info("Spider born - threads: spiders: " + spiderThreads + ", thinkers: " + thinkerThreads);
@@ -38,15 +40,19 @@ public class SpiderImpl implements Spider {
 
 		if (spidersMonitoringProps.getBoolean(ConfigConstants.CONFIG_THREADING_MONITORING_ENABLED, false)) {
 			int interval = spidersMonitoringProps.getInteger(ConfigConstants.CONFIG_THREADING_MONITORING_INTERVAL, DEFAULT_MONITORING_INTERVAL);
-			new ThreadPoolMonitorThread(context.getEventDispatcher(), interval, spiders);
+			monitorThread = new ThreadPoolMonitorThread(context.getEventDispatcher(), interval, spiders);
 		}
 		if (thinkerMonitoringProps.getBoolean(ConfigConstants.CONFIG_THREADING_MONITORING_ENABLED, false)) {
 			int interval = thinkerMonitoringProps.getInteger(ConfigConstants.CONFIG_THREADING_MONITORING_INTERVAL, DEFAULT_MONITORING_INTERVAL);
-			new ThreadPoolMonitorThread(context.getEventDispatcher(), interval, thinkers);
+			monitorThread = new ThreadPoolMonitorThread(context.getEventDispatcher(), interval, thinkers);
 		}
 	}
 
+	@Override
 	public void crawl(SpiderContext context) {
+		if (monitorThread != null) {
+			monitorThread.start();
+		}
 
 		long start = System.currentTimeMillis();
 
@@ -82,6 +88,7 @@ public class SpiderImpl implements Spider {
 		context.getEventDispatcher().dispatch(new SpideringStoppedEvent(context.getStorage()));
 
 		context.getEventDispatcher().shutdown();
+		CacheFactory.shutdown();
 
 		log.info("Spidering done!");
 		log.info("Elapsed time : " + (System.currentTimeMillis() - start));

@@ -14,7 +14,6 @@ public class ThreadPoolMonitorThread extends MonitorThread {
 	public ThreadPoolMonitorThread(EventDispatcher dispatcher, int interval, WorkerThreadPool pool) {
 		super(dispatcher, interval, pool.getName());
 		this.pool = pool;
-		start();
 	}
 
 	public MonitorEvent doMonitorTask() {

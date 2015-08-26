@@ -22,29 +22,41 @@ import org.apache.commons.logging.LogFactory;
 public class CacheFactory {
 
 	private static final Log logger = LogFactory.getLog(CacheFactory.class);
+	private static final CacheManager manager;
+	private static CommonCache ccache;
+
+	static {
+		CacheConfiguration cache = new CacheConfiguration("disk_cache_task", 5);
+		cache.setEternal(true);// never expired
+		cache.setDiskPersistent(false);
+		cache.setOverflowToDisk(true);
+		Configuration config = new Configuration();
+		DiskStoreConfiguration disk = new DiskStoreConfiguration();
+		config.addDiskStore(disk);
+		config.addCache(cache);
+		config.setDefaultCacheConfiguration(new CacheConfiguration("default", 1));
+		manager = new CacheManager(config);
+	}
 
 	public static CommonCache getCommonCache() {
-		return CommonCacheImp.ccache;
+		synchronized (CacheFactory.class) {
+			if (ccache == null) {
+				ccache = new CommonCacheImp(manager);
+			}
+		}
+		return ccache;
+	}
+
+	public static void shutdown() {
+		manager.shutdown();
 	}
 
 	public static class CommonCacheImp implements CommonCache {
 
-		private static CommonCacheImp ccache = new CommonCacheImp();
-
 		private Cache mcache;
 
-		private CommonCacheImp() {
+		private CommonCacheImp(CacheManager manager) {
 			try {
-				CacheConfiguration cache = new CacheConfiguration("disk_cache_task", 5);
-				cache.setEternal(true);// never expired
-				cache.setDiskPersistent(false);
-				cache.setOverflowToDisk(true);
-				Configuration config = new Configuration();
-				DiskStoreConfiguration disk = new DiskStoreConfiguration();
-				config.addDiskStore(disk);
-				config.addCache(cache);
-				config.setDefaultCacheConfiguration(new CacheConfiguration("default", 1));
-				CacheManager manager = new CacheManager(config);
 				this.mcache = manager.getCache("disk_cache_task");
 			} catch (CacheException ex) {
 				throw new RuntimeException(ex);

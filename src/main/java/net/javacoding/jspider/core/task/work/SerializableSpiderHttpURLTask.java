@@ -103,6 +103,7 @@ public class SerializableSpiderHttpURLTask implements WorkerTask, Serializable {
 
 	@Override
 	public void tearDown() {
+		context.getAgent().flagDone(this);
 		task.tearDown();
 	}
 }

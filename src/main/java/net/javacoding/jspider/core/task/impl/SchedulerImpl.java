@@ -140,11 +140,17 @@ public class SchedulerImpl implements Scheduler {
 	 */
 	public synchronized void flagDone(WorkerTask task) {
 		if (task.getType() == WorkerTask.WORKERTASK_THINKERTASK) {
-			assignedThinkerTasks.remove(task);
-			thinkerTasksDone++;
+			//可能是代理任务
+			boolean rm = assignedThinkerTasks.remove(task);
+			if (rm) {
+				thinkerTasksDone++;
+			}
 		} else {
-			assignedSpiderTasks.remove(task);
-			spiderTasksDone++;
+			//可能是代理任务!
+			boolean rm = assignedSpiderTasks.remove(task);
+			if (rm) {
+				spiderTasksDone++;
+			}
 		}
 	}
 
