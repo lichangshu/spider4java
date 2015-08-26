@@ -26,5 +26,6 @@ public class CacheFactoryTest extends TestCase {
 		for (int i = 0; i < size; i++) {
 			assertNotNull(result.getCacheSerializable("test-" + i));
 		}
+		System.out.println("out");
 	}
 }
