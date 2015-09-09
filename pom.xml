@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>wang.lcs.spider</groupId>
   <artifactId>spider-java</artifactId>
-  <version>0.5.1-SNAPSHOT</version>
+  <version>0.5.2</version>
   <packaging>jar</packaging>
 
   <name>spider4java</name>
