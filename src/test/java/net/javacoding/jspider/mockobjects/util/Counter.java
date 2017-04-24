@@ -1,22 +1,24 @@
 package net.javacoding.jspider.mockobjects.util;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * $Id: Counter.java,v 1.1 2002/12/06 19:13:32 vanrogu Exp $
  */
 public class Counter {
 
-	protected int count;
+	protected AtomicInteger count;
 
 	public Counter() {
-		count = 0;
+		count = new AtomicInteger();
 	}
 
-	public synchronized void increment() {
-		count = count + 1;
+	public void increment() {
+		count.getAndIncrement();
 	}
 
-	public synchronized int getValue() {
-		return count;
+	public int getValue() {
+		return count.get();
 	}
 
 }
